@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thời Khoá Biểu</title>
+    <title>Thời Khoá Biểu Gia Đình</title>
     <!-- Tailwind CSS CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -19,8 +19,8 @@
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
         .schedule-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 25px 50px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12), 0 10px 25px rgba(0, 0, 0, 0.07);
         }
         .day-header {
             border-bottom: 2px solid #e2e8f0;
@@ -34,13 +34,19 @@
         .schedule-section.extra {
             background-color: #e0f2fe; /* light blue for extra classes */
         }
+        .schedule-section.extra-c {
+            background-color: #fef3c7; /* light yellow for extra classes of Student 3 */
+        }
         .schedule-title {
             display: flex;
             align-items: center;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 600;
             color: #3b82f6;
             margin-bottom: 0.5rem;
+        }
+        .schedule-title.title-c {
+            color: #d97706; /* amber-600 */
         }
         .schedule-icon {
             margin-right: 0.5rem;
@@ -69,6 +75,11 @@
             background-color: #ffffff;
             border-color: #93c5fd; /* blue-300 */
             box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.5);
+        }
+        .editable-textarea-c {
+            background-color: #ffffff;
+            border-color: #fcd34d; /* amber-300 */
+            box-shadow: 0 0 0 2px rgba(252, 211, 77, 0.5);
         }
         .day-button {
             transition: background-color 0.3s, color 0.3s, transform 0.2s;
@@ -100,7 +111,7 @@
     <!-- Message Box -->
     <div id="message-box" class="message-box"></div>
 
-    <div class="w-full max-w-6xl mx-auto py-8 px-4">
+    <div class="w-full max-w-7xl mx-auto py-8 px-4">
         <div class="bg-white p-6 md:p-8 rounded-2xl schedule-card mb-6 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Thời Khoá Biểu</h1>
             <p id="date-display" class="text-gray-500 mb-4"></p>
@@ -122,19 +133,27 @@
             </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Student 1 Schedule -->
-            <div class="bg-white p-6 rounded-2xl schedule-card">
-                <h2 id="student-1-header" class="text-2xl font-bold text-gray-700 mb-4">Học sinh 1</h2>
+            <div class="bg-white p-6 rounded-2xl schedule-card border-t-4 border-blue-500">
+                <h2 id="student-1-header" class="text-2xl font-bold text-blue-700 mb-4">Học sinh 1</h2>
                 <div id="student-1-schedule" class="space-y-4">
                     <!-- Day sections will be generated here by JavaScript -->
                 </div>
             </div>
 
             <!-- Student 2 Schedule -->
-            <div class="bg-white p-6 rounded-2xl schedule-card">
-                <h2 id="student-2-header" class="text-2xl font-bold text-gray-700 mb-4">Học sinh 2</h2>
+            <div class="bg-white p-6 rounded-2xl schedule-card border-t-4 border-indigo-500">
+                <h2 id="student-2-header" class="text-2xl font-bold text-indigo-700 mb-4">Học sinh 2</h2>
                 <div id="student-2-schedule" class="space-y-4">
+                    <!-- Day sections will be generated here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Student 3 Schedule (Cao Vinh Quang) -->
+            <div class="bg-white p-6 rounded-2xl schedule-card border-t-4 border-amber-500">
+                <h2 id="student-3-header" class="text-2xl font-bold text-amber-700 mb-4">Học sinh 3</h2>
+                <div id="student-3-schedule" class="space-y-4">
                     <!-- Day sections will be generated here by JavaScript -->
                 </div>
             </div>
@@ -145,13 +164,16 @@
         const daysOfWeek = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ Nhật'];
         const student1Name = 'Cao Trần Hằng Nga';
         const student2Name = 'Cao Trần Thảo Huyền';
+        const student3Name = 'Cao Vinh Quang';
 
         const messageBox = document.getElementById('message-box');
         const loadingOverlay = document.getElementById('loading-overlay');
         const student1Header = document.getElementById('student-1-header');
         const student2Header = document.getElementById('student-2-header');
+        const student3Header = document.getElementById('student-3-header');
         const student1ScheduleContainer = document.getElementById('student-1-schedule');
         const student2ScheduleContainer = document.getElementById('student-2-schedule');
+        const student3ScheduleContainer = document.getElementById('student-3-schedule');
         const dateDisplayElement = document.getElementById('date-display');
         const toggleAdminBtn = document.getElementById('toggleAdminBtn');
         const daySelectionButtonsContainer = document.getElementById('day-selection-buttons');
@@ -181,11 +203,12 @@
         function generateScheduleContainers() {
             student1ScheduleContainer.innerHTML = '';
             student2ScheduleContainer.innerHTML = '';
+            student3ScheduleContainer.innerHTML = '';
             
             daysOfWeek.forEach((day, index) => {
                 const dayId = day.replace(/\s/g, '');
                 
-                // Student 1
+                // Student 1 (A)
                 const daySection1 = document.createElement('div');
                 daySection1.id = `day-section-A-${dayId}`;
                 daySection1.className = 'day-section';
@@ -208,13 +231,13 @@
                             </svg>
                             Lịch học thêm
                         </div>
-                        <div id="extra-schedule-A-container-${dayId}" class="space-y-4"></div>
+                        <div id="extra-schedule-A-${dayId}" class="space-y-4"></div>
                         <button class="add-extra-btn mt-4 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors hidden" data-day-id="${dayId}" data-student-id="A">+ Thêm Lịch</button>
                     </div>
                 `;
                 student1ScheduleContainer.appendChild(daySection1);
 
-                // Student 2
+                // Student 2 (B)
                 const daySection2 = document.createElement('div');
                 daySection2.id = `day-section-B-${dayId}`;
                 daySection2.className = 'day-section';
@@ -237,16 +260,44 @@
                             </svg>
                             Lịch học thêm
                         </div>
-                        <div id="extra-schedule-B-container-${dayId}" class="space-y-4"></div>
+                        <div id="extra-schedule-B-${dayId}" class="space-y-4"></div>
                         <button class="add-extra-btn mt-4 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors hidden" data-day-id="${dayId}" data-student-id="B">+ Thêm Lịch</button>
                     </div>
                 `;
                 student2ScheduleContainer.appendChild(daySection2);
+
+                // Student 3 (C)
+                const daySection3 = document.createElement('div');
+                daySection3.id = `day-section-C-${dayId}`;
+                daySection3.className = 'day-section';
+                daySection3.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-600 day-header pb-2 mb-2">${day}</h3>
+                    <div class="schedule-section">
+                        <div class="schedule-title title-c">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 schedule-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                            </svg>
+                            Lịch học chính
+                        </div>
+                        <textarea id="schedule-C-${dayId}" placeholder="Lịch học ${day}..." class="w-full text-gray-800 font-bold" readonly></textarea>
+                    </div>
+                    <div class="schedule-section extra extra-c">
+                        <div class="schedule-title title-c">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 schedule-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+                            </svg>
+                            Lịch học thêm
+                        </div>
+                        <div id="extra-schedule-C-${dayId}" class="space-y-4"></div>
+                        <button class="add-extra-btn mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors hidden" data-day-id="${dayId}" data-student-id="C">+ Thêm Lịch</button>
+                    </div>
+                `;
+                student3ScheduleContainer.appendChild(daySection3);
             });
         }
 
-        function createExtraScheduleEntryHtml({ start_time = '', end_time = '', teacher_name = '' }) {
-            // Check if isAdminMode is true to show delete button
+        function createExtraScheduleEntryHtml({ start_time = '', end_time = '', teacher_name = '' }, studentId = 'A') {
             const deleteButtonHtml = isAdminMode ? `
                 <button class="delete-extra-btn self-end sm:self-center bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -254,19 +305,22 @@
                     </svg>
                 </button>
             ` : '';
+
+            const focusRingClass = studentId === 'C' ? 'focus:ring-amber-500' : 'focus:ring-blue-500';
+
             return `
-                <div class="extra-schedule-entry flex flex-col sm:flex-row gap-2 items-center bg-gray-50 p-4 rounded-xl shadow-inner">
+                <div class="extra-schedule-entry flex flex-col sm:flex-row gap-2 items-center bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-100">
                     <div class="flex-1 w-full">
-                        <label class="block text-sm font-medium text-gray-700">Giờ đi</label>
-                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="VD: 19:00" value="${start_time}" data-field="start_time" ${isAdminMode ? '' : 'readonly'}>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Giờ đi</label>
+                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${focusRingClass} text-gray-800 font-semibold" placeholder="VD: 19:00" value="${start_time}" data-field="start_time" ${isAdminMode ? '' : 'readonly'}>
                     </div>
                     <div class="flex-1 w-full">
-                        <label class="block text-sm font-medium text-gray-700">Giờ về</label>
-                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="VD: 20:30" value="${end_time}" data-field="end_time" ${isAdminMode ? '' : 'readonly'}>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Giờ về</label>
+                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${focusRingClass} text-gray-800 font-semibold" placeholder="VD: 20:30" value="${end_time}" data-field="end_time" ${isAdminMode ? '' : 'readonly'}>
                     </div>
                     <div class="flex-1 w-full">
-                        <label class="block text-sm font-medium text-gray-700">Cô/Thầy</label>
-                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="VD: Cô Anh" value="${teacher_name}" data-field="teacher_name" ${isAdminMode ? '' : 'readonly'}>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Cô/Thầy</label>
+                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${focusRingClass} text-gray-800 font-semibold" placeholder="VD: Cô Anh" value="${teacher_name}" data-field="teacher_name" ${isAdminMode ? '' : 'readonly'}>
                     </div>
                     ${deleteButtonHtml}
                 </div>
@@ -312,6 +366,10 @@
                     textarea.readOnly = false;
                     textarea.classList.add('editable-textarea');
                 });
+                document.querySelectorAll('textarea[id^="schedule-C-"]').forEach(textarea => {
+                    textarea.readOnly = false;
+                    textarea.classList.add('editable-textarea-c');
+                });
                 
                 // Show add and delete buttons for extra schedule
                 document.querySelectorAll('.add-extra-btn, .delete-extra-btn').forEach(btn => {
@@ -325,6 +383,7 @@
                 
                 student1Header.textContent = `${student1Name}`;
                 student2Header.textContent = `${student2Name}`;
+                student3Header.textContent = `${student3Name}`;
                 toggleAdminBtn.textContent = 'Ẩn Toàn Bộ Lịch';
             } else {
                 document.querySelectorAll('.day-section').forEach(section => {
@@ -333,14 +392,16 @@
                 const targetDayId = selectedDay.replace(/\s/g, '');
                 const targetDaySectionA = document.getElementById(`day-section-A-${targetDayId}`);
                 const targetDaySectionB = document.getElementById(`day-section-B-${targetDayId}`);
+                const targetDaySectionC = document.getElementById(`day-section-C-${targetDayId}`);
                 
                 if (targetDaySectionA) targetDaySectionA.style.display = 'block';
                 if (targetDaySectionB) targetDaySectionB.style.display = 'block';
+                if (targetDaySectionC) targetDaySectionC.style.display = 'block';
 
                 // Make main schedule textareas read-only again
-                document.querySelectorAll('textarea[id^="schedule-A-"], textarea[id^="schedule-B-"]').forEach(textarea => {
+                document.querySelectorAll('textarea[id^="schedule-A-"], textarea[id^="schedule-B-"], textarea[id^="schedule-C-"]').forEach(textarea => {
                     textarea.readOnly = true;
-                    textarea.classList.remove('editable-textarea');
+                    textarea.classList.remove('editable-textarea', 'editable-textarea-c');
                 });
 
                 // Hide add and delete buttons for extra schedule
@@ -355,6 +416,7 @@
 
                 student1Header.textContent = `${student1Name}`;
                 student2Header.textContent = `${student2Name}`;
+                student3Header.textContent = `${student3Name}`;
                 toggleAdminBtn.textContent = 'Xem Toàn Bộ Lịch';
             }
         }
@@ -438,7 +500,7 @@
             if (!namesError && namesData) {
                 updateNamesUI(namesData);
             } else {
-                updateNamesUI({ student1_name: student1Name, student2_name: student2Name });
+                updateNamesUI({ student1_name: student1Name, student2_name: student2Name, student3_name: student3Name });
             }
 
             const { data: schedulesData, error: schedulesError } = await supabase.from('schedules').select('*');
@@ -457,6 +519,7 @@
         function updateNamesUI(names) {
             student1Header.textContent = names.student1_name || student1Name;
             student2Header.textContent = names.student2_name || student2Name;
+            student3Header.textContent = names.student3_name || student3Name;
         }
 
         function renderAllSchedules(data) {
@@ -468,15 +531,20 @@
 
         function renderDay(dayId, schedule) {
             const studentATextarea = document.getElementById(`schedule-A-${dayId}`);
-            const extraStudentAContainer = document.getElementById(`extra-schedule-A-container-${dayId}`);
+            const extraStudentAContainer = document.getElementById(`extra-schedule-A-${dayId}`);
             const studentBTextarea = document.getElementById(`schedule-B-${dayId}`);
-            const extraStudentBContainer = document.getElementById(`extra-schedule-B-container-${dayId}`);
+            const extraStudentBContainer = document.getElementById(`extra-schedule-B-${dayId}`);
+            const studentCTextarea = document.getElementById(`schedule-C-${dayId}`);
+            const extraStudentCContainer = document.getElementById(`extra-schedule-C-${dayId}`);
             
             if (studentATextarea) {
                 studentATextarea.value = schedule.student_a || '';
             }
             if (studentBTextarea) {
                 studentBTextarea.value = schedule.student_b || '';
+            }
+            if (studentCTextarea) {
+                studentCTextarea.value = schedule.student_c || '';
             }
             
             // Handle structured extra schedules (JSON array)
@@ -495,22 +563,30 @@
                 console.error("Failed to parse extra schedule for Student B:", e);
                 renderExtraScheduleEntries(extraStudentBContainer, dayId, 'B', []);
             }
+
+            try {
+                const extraC = JSON.parse(schedule.extra_student_c || '[]');
+                renderExtraScheduleEntries(extraStudentCContainer, dayId, 'C', extraC);
+            } catch (e) {
+                console.error("Failed to parse extra schedule for Student C:", e);
+                renderExtraScheduleEntries(extraStudentCContainer, dayId, 'C', []);
+            }
             
             autoResizeTextareas();
         }
         
         function renderExtraScheduleEntries(container, dayId, studentId, entries) {
-            if (!container) return; // Add null check for container
+            if (!container) return;
             container.innerHTML = '';
             entries.forEach(entry => {
                 const entryDiv = document.createElement('div');
-                entryDiv.innerHTML = createExtraScheduleEntryHtml(entry);
+                entryDiv.innerHTML = createExtraScheduleEntryHtml(entry, studentId);
                 container.appendChild(entryDiv.firstElementChild);
             });
         }
         
         function collectExtraScheduleData(dayId, studentId) {
-            const container = document.getElementById(`extra-schedule-${studentId}-container-${dayId}`);
+            const container = document.getElementById(`extra-schedule-${studentId}-${dayId}`);
             if (!container) {
                 console.error("Container not found for dayId:", dayId, "and studentId:", studentId);
                 return []; 
@@ -555,7 +631,7 @@
 
         async function saveExtraSchedule(dayId, studentId) {
             const extraScheduleData = collectExtraScheduleData(dayId, studentId);
-            const field = studentId === 'A' ? 'extra_student_a' : 'extra_student_b';
+            const field = studentId === 'A' ? 'extra_student_a' : (studentId === 'B' ? 'extra_student_b' : 'extra_student_c');
             await saveSchedule(dayId, field, JSON.stringify(extraScheduleData));
         }
 
@@ -610,17 +686,17 @@
             updateHeaderDate();
             setInterval(updateHeaderDate, 1000);
 
-            // Add event listeners for new buttons and inputs
+            // Add event listeners for buttons and inputs using event delegation
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.add-extra-btn')) {
                     const btn = e.target.closest('.add-extra-btn');
                     if (!isAdminMode) return; // Prevent action if not in admin mode
                     const dayId = btn.dataset.dayId;
                     const studentId = btn.dataset.studentId;
-                    const container = document.getElementById(`extra-schedule-${studentId}-container-${dayId}`);
+                    const container = document.getElementById(`extra-schedule-${studentId}-${dayId}`);
                     if (!container) return; // Add null check
                     const newEntryDiv = document.createElement('div');
-                    newEntryDiv.innerHTML = createExtraScheduleEntryHtml({});
+                    newEntryDiv.innerHTML = createExtraScheduleEntryHtml({}, studentId);
                     container.appendChild(newEntryDiv.firstElementChild);
                     saveExtraSchedule(dayId, studentId);
                 } else if (e.target.closest('.delete-extra-btn')) {
@@ -630,8 +706,8 @@
                     const parentContainer = btn.closest('[id^="extra-schedule-"]');
                     if (parentContainer) {
                         const idParts = parentContainer.id.split('-');
-                        const dayId = idParts[idParts.length - 1];
                         const studentId = idParts[2];
+                        const dayId = idParts[3];
                         entryDiv.remove();
                         saveExtraSchedule(dayId, studentId);
                     }
@@ -646,14 +722,14 @@
                     const parentContainer = input.closest('[id^="extra-schedule-"]');
                     if (parentContainer) {
                         const idParts = parentContainer.id.split('-');
-                        const dayId = idParts[idParts.length - 1];
                         const studentId = idParts[2];
+                        const dayId = idParts[3];
                         saveExtraSchedule(dayId, studentId);
                     }
-                } else if (textarea.id.startsWith('schedule-') && !textarea.readOnly) {
+                } else if (textarea.id && textarea.id.startsWith('schedule-') && !textarea.readOnly) {
                     const idParts = textarea.id.split('-');
-                    const dayId = idParts[2];
                     const studentId = idParts[1];
+                    const dayId = idParts[2];
                     const field = `student_${studentId.toLowerCase()}`;
                     saveSchedule(dayId, field, textarea.value);
                 }
@@ -661,17 +737,20 @@
 
             document.addEventListener('focus', (e) => {
                 if (e.target.tagName === 'INPUT' || (e.target.tagName === 'TEXTAREA' && !e.target.readOnly)) {
-                    e.target.classList.add('editable-textarea');
+                    if (e.target.id && e.target.id.startsWith('schedule-C')) {
+                        e.target.classList.add('editable-textarea-c');
+                    } else {
+                        e.target.classList.add('editable-textarea');
+                    }
                 }
             }, true);
 
             document.addEventListener('blur', (e) => {
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                    e.target.classList.remove('editable-textarea');
+                    e.target.classList.remove('editable-textarea', 'editable-textarea-c');
                 }
             }, true);
         });
     </script>
 </body>
 </html>
-
