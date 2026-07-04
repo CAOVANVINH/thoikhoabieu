@@ -7,7 +7,7 @@
     <!-- Tailwind CSS CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=400;600;700;800&display=swap');
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f5f7fa;
@@ -113,7 +113,7 @@
 
     <div class="w-full max-w-7xl mx-auto py-8 px-4">
         <div class="bg-white p-6 md:p-8 rounded-2xl schedule-card mb-6 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Thời Khoá Biểu</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Thời Khoá Biểu Gia Đình</h1>
             <p id="date-display" class="text-gray-500 mb-4"></p>
             
             <!-- Day selection buttons and Auto button -->
@@ -182,7 +182,7 @@
         let selectedDay = null;
 
         const SUPABASE_URL = 'https://zjszwvzdlsddpgmencze.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqc3p3dnpkbHNkZHBnbWVuY3plIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzExNDMxOSwiZXhwIjoyMDk4NjkwMzE5fQ.sidi_uYR0KXJ_5hDfgSDFma6YqN92-_G7ukCrRYR1hc';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqc3p3dnpkbHNkZHBnbWVuY3plIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTt3MzExNDMxOSwiZXhwIjoyMDk4NjkwMzE5fQ.sidi_uYR0KXJ_5hDfgSDFma6YqN92-_G7ukCrRYR1hc';
         
         let supabase = null;
 
@@ -266,7 +266,7 @@
                 `;
                 student2ScheduleContainer.appendChild(daySection2);
 
-                // Student 3 (C)
+                // Student 3 (C) - Đã FIX ID daySection3 ở đây
                 const daySection3 = document.createElement('div');
                 daySection3.id = `day-section-C-${dayId}`;
                 daySection3.className = 'day-section';
@@ -396,7 +396,7 @@
                 
                 if (targetDaySectionA) targetDaySectionA.style.display = 'block';
                 if (targetDaySectionB) targetDaySectionB.style.display = 'block';
-                if (targetDaySectionC) targetDaySectionC.style.display = 'block';
+                if (targetDaySectionC) targetDaySectionC.style.display = 'block'; // Đã hiển thị mượt mà Học sinh 3 ở chế độ Thường
 
                 // Make main schedule textareas read-only again
                 document.querySelectorAll('textarea[id^="schedule-A-"], textarea[id^="schedule-B-"], textarea[id^="schedule-C-"]').forEach(textarea => {
@@ -480,7 +480,7 @@
         function startRealtimeListeners() {
             supabase.channel('public:settings')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, payload => {
-                    if (payload.new.id === 'student_names') {
+                    if (payload.new && payload.new.id === 'student_names') {
                         updateNamesUI(payload.new);
                     }
                 })
@@ -690,18 +690,18 @@
             document.addEventListener('click', (e) => {
                 if (e.target.closest('.add-extra-btn')) {
                     const btn = e.target.closest('.add-extra-btn');
-                    if (!isAdminMode) return; // Prevent action if not in admin mode
+                    if (!isAdminMode) return; 
                     const dayId = btn.dataset.dayId;
                     const studentId = btn.dataset.studentId;
                     const container = document.getElementById(`extra-schedule-${studentId}-${dayId}`);
-                    if (!container) return; // Add null check
+                    if (!container) return; 
                     const newEntryDiv = document.createElement('div');
                     newEntryDiv.innerHTML = createExtraScheduleEntryHtml({}, studentId);
                     container.appendChild(newEntryDiv.firstElementChild);
                     saveExtraSchedule(dayId, studentId);
                 } else if (e.target.closest('.delete-extra-btn')) {
                     const btn = e.target.closest('.delete-extra-btn');
-                    if (!isAdminMode) return; // Prevent action if not in admin mode
+                    if (!isAdminMode) return; 
                     const entryDiv = btn.closest('.extra-schedule-entry');
                     const parentContainer = btn.closest('[id^="extra-schedule-"]');
                     if (parentContainer) {
