@@ -133,7 +133,8 @@
             </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Đã sửa grid thành grid-cols-1 để hiển thị 3 hàng dọc xếp chồng nhau -->
+        <div class="grid grid-cols-1 gap-6">
             <!-- Student 1 Schedule -->
             <div class="bg-white p-6 rounded-2xl schedule-card border-t-4 border-blue-500">
                 <h2 id="student-1-header" class="text-2xl font-bold text-blue-700 mb-4">Học sinh 1</h2>
@@ -182,7 +183,7 @@
         let selectedDay = null;
 
         const SUPABASE_URL = 'https://zjszwvzdlsddpgmencze.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqc3p3dnpkbHNkZHBnbWVuY3plIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTt3MzExNDMxOSwiZXhwIjoyMDk4NjkwMzE5fQ.sidi_uYR0KXJ_5hDfgSDFma6YqN92-_G7ukCrRYR1hc';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqc3p3dnpkbHNkZHBnbWVuY3plIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzExNDMxOSwiZXhwIjoyMDk4NjkwMzE5fQ.sidi_uYR0KXJ_5hDfgSDFma6YqN92-_G7ukCrRYR1hc';
         
         let supabase = null;
 
@@ -266,7 +267,7 @@
                 `;
                 student2ScheduleContainer.appendChild(daySection2);
 
-                // Student 3 (C) - Đã FIX ID daySection3 ở đây
+                // Student 3 (C)
                 const daySection3 = document.createElement('div');
                 daySection3.id = `day-section-C-${dayId}`;
                 daySection3.className = 'day-section';
@@ -396,7 +397,7 @@
                 
                 if (targetDaySectionA) targetDaySectionA.style.display = 'block';
                 if (targetDaySectionB) targetDaySectionB.style.display = 'block';
-                if (targetDaySectionC) targetDaySectionC.style.display = 'block'; // Đã hiển thị mượt mà Học sinh 3 ở chế độ Thường
+                if (targetDaySectionC) targetDaySectionC.style.display = 'block';
 
                 // Make main schedule textareas read-only again
                 document.querySelectorAll('textarea[id^="schedule-A-"], textarea[id^="schedule-B-"], textarea[id^="schedule-C-"]').forEach(textarea => {
